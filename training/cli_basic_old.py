@@ -2,15 +2,11 @@
 import random
 from card_lib.deck import Deck
 from core.strategies.basic import BasicStrategy
-from card_lib.simulation.mississippi_simulator import MississippiStudStrategy, simulate_round
-from card_lib.evaluators.mississippi import evaluate_mississippi_stud_hand
+from card_lib.simulation.mississippi_simulator import MississippiStudStrategy
 
 class HumanTrainer(MississippiStudStrategy):
     def __init__(self, strategy):
         self.strategy = strategy
-        self.final_hand = []
-        self.result = None
-        self.payout = 0
 
     def get_bet(self, hole_cards, revealed_community_cards, stage, ante=1, current_total=0):
         print(f"\n===== {stage.upper()} STREET =====")
@@ -41,18 +37,17 @@ class HumanTrainer(MississippiStudStrategy):
 
 def main():
     deck = Deck()
+    deck.shuffle()
+
     strategy = BasicStrategy()
     trainer = HumanTrainer(strategy)
 
+    from card_lib.simulation.mississippi_simulator import simulate_round
+
     while True:
         print("\n========== NEW HAND ==========")
-        deck.shuffle()
-
-        profit = simulate_round(deck, trainer, ante=5)
-
-        print(f"💰 Net payout: {profit}")
-
-        again = input("\nPlay another? (y/n): ").strip().lower()
+        simulate_round(deck, trainer, ante=5)
+        again = input("Play another? (y/n): ").strip().lower()
         if again != "y":
             break
 
