@@ -1,0 +1,6 @@
+
+numpy
+scipy
+matplotlib
+pandas
+git+https://github.com/NolanCSE/card_lib.git
