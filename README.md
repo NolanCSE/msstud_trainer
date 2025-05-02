@@ -7,7 +7,7 @@ A simulation and training suite for Mississippi Stud poker, supporting strategy 
 - 🃏 **Basic Strategy**: Implements standard optimal play based on a point-based hand evaluation system.
 - 🧠 **Advantage Play Strategies**:
   - **AP-3**: Optimized for known 3rd street (flop) strategy with pre-revealed cards.
-  - **AP-5**: Optimized for known 5th street (river) strategy with all community cards known.
+  - **AP-5**: Optimized for known 5th street (river) strategy with the 5th street (river) community card known.
 - 📈 **Simulator**:
   - Simulates rounds with given ante, strategy, bankroll, and speed (rounds/hr).
   - Calculates EV, standard deviation, risk of ruin, and N₀ (convergence threshold).
