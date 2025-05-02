@@ -46,6 +46,7 @@ def main():
     trainer = HumanTrainer(strategy)
 
     while True:
+        deck = Deck()
         print("\n========== NEW HAND ==========")
         deck.shuffle()
 
