@@ -4,12 +4,13 @@ import statistics
 import multiprocessing
 from card_lib.deck import Deck
 from core.strategies.basic import BasicStrategy
+from core.strategies.ap3 import AdvantagePlay3rdStrategy
 from card_lib.simulation.mississippi_simulator import MississippiStudStrategy, simulate_round
 from analysis.bankroll_math import risk_of_ruin
 
 STRATEGIES = {
     "basic": BasicStrategy,
-    # "ap3": AP3Strategy,
+    "ap3": AdvantagePlay3rdStrategy,
     # "ap5": AP5Strategy
 }
 
@@ -17,8 +18,8 @@ class SimulatedStrategy(MississippiStudStrategy):
     def __init__(self, strategy):
         self.strategy = strategy
 
-    def get_bet(self, hole_cards, revealed_community_cards, stage, ante=1, current_total=0):
-        return self.strategy.get_bet(hole_cards, revealed_community_cards, stage, ante, current_total)
+    def get_bet(self, hole_cards, revealed_community_cards, stage, ante=1, current_total=0, ap_revealed_community_cards={'3rd': None, '4th': None, '5th': None}):
+        return self.strategy.get_bet(hole_cards, revealed_community_cards, stage, ante, current_total, ap_revealed_community_cards)
 
 def simulate_hand(args):
     strategy_class, ante, verbose = args
@@ -26,7 +27,7 @@ def simulate_hand(args):
     wrapper = SimulatedStrategy(strategy)
     deck = Deck()
     deck.shuffle()
-    return simulate_round(deck, wrapper, ante=ante)
+    return simulate_round(deck, wrapper, ante=ante, ap_revealed_community_cards={'3rd': True if strategy_class == AdvantagePlay3rdStrategy else False, '4th': False, '5th': False})
 
 def run_simulation(strategy_name, rounds, ante, bankroll, verbose, rounds_per_hour):
     strategy_class = STRATEGIES.get(strategy_name)
@@ -67,7 +68,7 @@ def run_simulation(strategy_name, rounds, ante, bankroll, verbose, rounds_per_ho
         print(f"N₀ (hours @ {rounds_per_hour} rph): {n0_hours:.2f}")
     else:
         print("N₀: ∞ (non-positive EV)")
-        
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Mississippi Stud Strategy Simulation")
     parser.add_argument("--strategy", type=str, default="basic", help="Strategy name (default: basic)")

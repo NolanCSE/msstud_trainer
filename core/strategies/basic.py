@@ -6,7 +6,7 @@ class BasicStrategy:
     def __init__(self):
         self.previous_3x = False
 
-    def get_bet(self, hole_cards, revealed_community_cards, stage, ante=1, current_total=0):
+    def get_bet(self, hole_cards, revealed_community_cards, stage, ante=1, current_total=0, ap_revealed_community_cards={'3rd': None, '4th': None, '5th': None}):
         all_cards = hole_cards + revealed_community_cards
         features = evaluate_partial_hand(all_cards)
         num_cards = len(all_cards)

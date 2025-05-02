@@ -2,6 +2,8 @@
 from collections import Counter
 from card_lib.card import Card
 from card_lib.utils.mississippi_constants import RANK_ORDER
+from card_lib.evaluators.mississippi import evaluate_mississippi_stud_hand
+
 def card_points(card: Card) -> int:
     if card.rank in {"J", "Q", "K", "A"}:
         return 2
@@ -25,7 +27,13 @@ def evaluate_partial_hand(cards: list[Card]) -> dict:
         if count == 2:
             pair_rank = rank
 
-    is_made_hand = pair_rank and RANK_ORDER[pair_rank] >= 6
+    # is_made_hand = pair_rank and RANK_ORDER[pair_rank] >= 6
+    padded = cards[:]
+    while len(padded) < 5:
+        padded.append(Card("Joker", "Red"))
+
+    result = evaluate_mississippi_stud_hand(padded, joker_mode="dead")
+    is_made_hand = result not in ["Loss", "High Card"]
 
     flush_draw = any(suits.count(suit) >= len(cards) for suit in suits)
 
@@ -51,4 +59,5 @@ def evaluate_partial_hand(cards: list[Card]) -> dict:
         "num_mid_cards": num_mid,
         "num_low_cards": num_low,
         "total_points": sum(card_points(card) for card in cards),
+        "min_straight_rank": min(RANK_ORDER[rank] for rank in ranks) if ranks else 0,
     }
