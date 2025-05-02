@@ -60,4 +60,5 @@ def evaluate_partial_hand(cards: list[Card]) -> dict:
         "num_low_cards": num_low,
         "total_points": sum(card_points(card) for card in cards),
         "min_straight_rank": min(RANK_ORDER[rank] for rank in ranks) if ranks else 0,
+        "contains_8_or_higher": any(RANK_ORDER[rank] >= 8 for rank in ranks)
     }

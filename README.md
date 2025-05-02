@@ -1,24 +1,20 @@
+# Mississippi Stud Trainer
 
-# 🧠 Mississippi Stud Trainer & Simulator
+A simulation and training suite for Mississippi Stud poker, supporting strategy development, evaluation, and bankroll analysis.
 
-This project provides a modular training and analysis suite for Mississippi Stud, built on top of the `card_lib` engine. It includes both player training tools and betting outcome simulation based on customizable strategies.
+## Features
 
----
+- 🃏 **Basic Strategy**: Implements standard optimal play based on a point-based hand evaluation system.
+- 🧠 **Advantage Play Strategies**:
+  - **AP-3**: Optimized for known 3rd street (flop) strategy with pre-revealed cards.
+  - **AP-5**: Optimized for known 5th street (river) strategy with all community cards known.
+- 📈 **Simulator**:
+  - Simulates rounds with given ante, strategy, bankroll, and speed (rounds/hr).
+  - Calculates EV, standard deviation, risk of ruin, and N₀ (convergence threshold).
+- 🧪 **Test Suites** for all evaluators, strategy engines, and feature extraction logic.
+- 👨‍🏫 **CLI Training Interface**: Trains the user interactively with immediate feedback and corrections.
 
-## 🎯 Goals
-
-- ✅ **Training** with real-time feedback and strategy correction
-  - Basic Strategy Mode
-  - Advantage Play with 3rd Street Reveal
-  - Advantage Play with 5th Street Reveal
-
-- 📈 **Simulation** for statistical analysis of betting systems
-  - EV/hour, Std Dev, Risk of Ruin, House Edge
-  - Analysis over configurable timeframes and bankrolls
-
----
-
-## 🗂 Project Structure
+## Structure
 
 ```
 msstud_trainer/
@@ -46,62 +42,34 @@ msstud_trainer/
 └── LICENSE
 ```
 
----
+## How to Use
 
-## 🔧 Dependencies
-
-- Python 3.8+
-- `card_lib` (must be installed locally or via GitHub)
-- (Optional) `matplotlib`, `numpy`, `pandas` for analytics/plots
-
-Install dependencies:
+### 1. Setup
 
 ```bash
-pip install -r requirements.txt
+python -m venv venv
+venv\Scripts\activate
+pip install -e .
 ```
 
----
-
-## 🚀 Usage
-
-### Training Mode (Basic Strategy)
+### 2. Simulate Strategy
 
 ```bash
-python training/cli_basic.py
+python -m core.simulation --strategy ap3 --rounds 100000 --ante 5 --bankroll 500 --rounds_per_hour 30 --verbose
 ```
 
-### Simulation Mode
+### 3. Train Interactively
 
 ```bash
-python core/simulation.py --strategy ap_5th --bankroll 1000 --ante 5 --rounds 100000
+python -m training.cli_basic
 ```
 
----
-
-## 📊 Output Metrics (Simulation)
-
-- **EV/hour**: Expected value over time
-- **Standard Deviation**
-- **Risk of Ruin**
-- **House Edge**
-- **Hours to Safe Play** (2 SD drop = bankroll 0)
-
----
-
-## 🧪 Running Tests
+### 4. Run Tests
 
 ```bash
 python -m unittest discover tests
 ```
 
----
+## License
 
-## 🔗 Related Project
-
-This tool is built on the [card_lib](https://github.com/NolanCSE/card_lib) engine.
-
----
-
-## 📃 License
-
-MIT License
+MIT License - see `LICENSE` file.
