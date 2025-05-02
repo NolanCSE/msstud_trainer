@@ -5,13 +5,14 @@ import multiprocessing
 from card_lib.deck import Deck
 from core.strategies.basic import BasicStrategy
 from core.strategies.ap3 import AdvantagePlay3rdStrategy
+from core.strategies.ap5 import AdvantagePlay5thStrategy
 from card_lib.simulation.mississippi_simulator import MississippiStudStrategy, simulate_round
 from analysis.bankroll_math import risk_of_ruin
 
 STRATEGIES = {
     "basic": BasicStrategy,
     "ap3": AdvantagePlay3rdStrategy,
-    # "ap5": AP5Strategy
+    "ap5": AdvantagePlay5thStrategy
 }
 
 class SimulatedStrategy(MississippiStudStrategy):
@@ -27,7 +28,7 @@ def simulate_hand(args):
     wrapper = SimulatedStrategy(strategy)
     deck = Deck()
     deck.shuffle()
-    return simulate_round(deck, wrapper, ante=ante, ap_revealed_community_cards={'3rd': True if strategy_class == AdvantagePlay3rdStrategy else False, '4th': False, '5th': False})
+    return simulate_round(deck, wrapper, ante=ante, ap_revealed_community_cards={'3rd': True if strategy_class == AdvantagePlay3rdStrategy else False, '4th': False, '5th': True if strategy_class == AdvantagePlay5thStrategy else False})
 
 def run_simulation(strategy_name, rounds, ante, bankroll, verbose, rounds_per_hour):
     strategy_class = STRATEGIES.get(strategy_name)
