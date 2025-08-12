@@ -38,37 +38,41 @@ def run_simulation(strategy_name, rounds, ante, bankroll, verbose, rounds_per_ho
     args_list = [(strategy_class, ante, verbose) for _ in range(rounds)]
 
     with multiprocessing.Pool() as pool:
-        profits = []
-        for i, profit in enumerate(pool.imap_unordered(simulate_hand, args_list, chunksize=100)):
+        profits, totals = [], []
+        for i, (profit, total) in enumerate(pool.imap_unordered(simulate_hand, args_list, chunksize=100)):
             profits.append(profit)
+            totals.append(total)
             if verbose and (i + 1) % 1000 == 0:
                 print(f"Simulated {i + 1} / {rounds} hands...")
 
-    ev = sum(profits) / rounds
-    stdev = statistics.stdev(profits) if len(profits) > 1 else 0
-    win_rate = sum(1 for p in profits if p > 0) / rounds
-    loss_rate = sum(1 for p in profits if p < 0) / rounds
-    push_rate = 1.0 - win_rate - loss_rate
-    ror = risk_of_ruin(ev, stdev, bankroll)
+    ev_per_hand = sum(profits) / rounds
+    Tbar = sum(totals) / rounds
+    mu_risk = ev_per_hand / Tbar
+    sigma_risk = statistics.pstdev([p / Tbar for p in profits])  # SD in risk units
+    B_over_Tbar = bankroll / Tbar
+
+    ror = risk_of_ruin(mu_risk, sigma_risk, B_over_Tbar)
 
     print(f"\nStrategy: {strategy_name}")
     print(f"Rounds: {rounds}")
     print(f"Ante: ${ante}")
-    print(f"EV per hand: ${ev:.2f}")
-    print(f"Standard Deviation: ${stdev:.2f}")
-    print(f"Win Rate: {win_rate:.1%}")
-    print(f"Loss Rate: {loss_rate:.1%}")
-    print(f"Push Rate: {push_rate:.1%}")
-    print(f"Risk of Ruin (bankroll = ${bankroll}): {ror:.2%}")
-    print(f"EV/hr: ${ev * rounds_per_hour:.2f}")
+    print(f"EV per hand: ${ev_per_hand:.2f}")
+    print(f"Standard Deviation: ${statistics.stdev(profits):.2f}" if len(profits) > 1 else "Standard Deviation: $0.00")
+    print(f"Win Rate: {sum(1 for p in profits if p > 0)/rounds:.1%}")
+    print(f"Loss Rate: {sum(1 for p in profits if p < 0)/rounds:.1%}")
+    print(f"Push Rate: {1 - sum(1 for p in profits if p != 0)/rounds:.1%}")
+    print(f"Avg total bet T̄: ${Tbar:.2f}")
+    print(f"μ (risk units): {mu_risk:.4f}   σ (risk units): {sigma_risk:.4f}")
+    print(f"Risk of Ruin (bankroll = ${bankroll:.2f}, ~{B_over_Tbar:.1f} risk units): {ror:.2%}")
+    print(f"EV/hr: ${ev_per_hand * rounds_per_hour:.2f}")
 
-    if ev > 0:
-        n0 = (stdev / ev) ** 2
-        n0_hours = n0 / rounds_per_hour
-        print(f"N₀ (rounds): {n0:.0f}")
-        print(f"N₀ (hours @ {rounds_per_hour} rph): {n0_hours:.2f}")
-    else:
-        print("N₀: ∞ (non-positive EV)")
+    # if ev > 0:
+    #     n0 = (stdev / ev) ** 2
+    #     n0_hours = n0 / rounds_per_hour
+    #     print(f"N₀ (rounds): {n0:.0f}")
+    #     print(f"N₀ (hours @ {rounds_per_hour} rph): {n0_hours:.2f}")
+    # else:
+    #     print("N₀: ∞ (non-positive EV)")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Mississippi Stud Strategy Simulation")
