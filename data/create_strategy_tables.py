@@ -5,10 +5,10 @@ from io import StringIO
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
 
-strategies = ['basic']
-antes = [5, 10]
-bankrolls = [5000]
-rounds_per_hour_list = [20, 30, 40, 50, 60]  # Adjust as needed
+strategies = ['basic', 'ap3', 'ap5']
+antes = [5, 10, 15, 20]
+bankrolls = [10000]
+rounds_per_hour_list = [20, 30, 40, 50]  # Adjust as needed
 rounds = 5000000  # bump as you like
 
 # EXACT columns we’ll output (N0 removed)
@@ -88,7 +88,7 @@ def main():
     df = pd.DataFrame(results, columns=fieldnames)
 
     # Write to Excel
-    out_xlsx = "b_basic_mississippi_stud_strategy_analysis.xlsx"
+    out_xlsx = "10k_strategy_list_mississippi_stud_strategy_analysis.xlsx"
     with pd.ExcelWriter(out_xlsx, engine='openpyxl') as writer:
         df.to_excel(writer, index=False, sheet_name='Simulation Results')
         ws = writer.sheets['Simulation Results']
