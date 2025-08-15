@@ -13,6 +13,7 @@ class AdvantagePlay3rdStrategy:
         if stage == "3rd":
             cards.append(ap_revealed_community_cards['3rd'])
 
+        print('Partial Hand:', [str(card) for card in cards])
         features = evaluate_partial_hand(cards)
 
         if stage == "3rd":
