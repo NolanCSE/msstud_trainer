@@ -33,6 +33,7 @@ def evaluate_partial_hand(cards: list[Card]) -> dict:
         padded.append(Card("Joker", "Red"))
 
     result = evaluate_mississippi_stud_hand(padded, joker_mode="dead")
+    print(f'Evaluating hand: {cards} -> Result: {result}')
     is_made_hand = result not in ["Loss", "High Card"]
 
     flush_draw = any(suits.count(suit) >= len(cards) for suit in suits)
